@@ -33,6 +33,7 @@ jobs:
           REPO: ${{ secrets.GIT_REPO }}
         run: |
           docker build -t  $REPO .
-          docker tag $REPO $NAME/$REPO
           docker push $NAME/$REPO
+         # docker tag $REPO $NAME/$REPO
+
       
