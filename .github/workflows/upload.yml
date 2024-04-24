@@ -33,7 +33,6 @@ jobs:
           REPO: ${{ secrets.GIT_REPO }}
         run: |
           docker build -t $REPO .
-          run: echo ${{ github.workspace }}
           docker tag $REPO:latest $NAME/$REPO:latest
           docker push $NAME/$REPO:latest
       
