@@ -25,16 +25,31 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME}}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN}}    
+      - name: Build docker image and push to ECR
+        uses: docker/build-push-action@v4
+        env:
+          DOCKER_BUILDKIT: 1
+          BUILDKIT_PROGRESS: plain
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: #ecr 주소
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       #도커 허브 배포
-      - name: build and release to DockerHub
+      - name: Build and push
+        uses: docker/build-push-action@v5
         env:
           NAME: ${{ secrets.DOCKERHUB_USERNAME }}
           REPO: ${{ secrets.GIT_REPO }}
-        run: |
-          docker build -t  $REPO .
-          docker tag $REPO $NAME/$REPO
-          docker push $NAME/$REPO
-        
+        with:
+          context: .
+          push: true
+          tags: $NAME/$REPO:latest
+          cache-from: type=registry,ref=$NAME/$REPO:buildcache
+          cache-to: type=registry,ref=$NAME/$REPO:buildcache,mode=max
+      
 
       
